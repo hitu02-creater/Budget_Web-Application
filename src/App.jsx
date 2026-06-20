@@ -82,17 +82,41 @@ function App() {
     },
   ]);
 
+  const [formData, setFormData] = useState({
+      description: "",
+      amount: "",
+      category: "",
+      type: "expense",
+    });
+  
+    const addTransaction = () => {
+      const newTransaction = {
+        id: Date.now().toString(),
+        description: formData.description,
+        amount: parseFloat(formData.amount),
+        category: formData.category,
+        type: formData.type,
+        date: new Date().toISOString().split("T")[0],
+        month: new Date().toLocaleDateString("en-US", {
+          year: "numeric",
+          month: "short",
+    }),
+  };
+
+    setTransactions((prev) => [newTransaction, ...prev]);
+  };
+
   const formatCurrency = (value) => {
       return `Rs. ${value.toFixed(2)}`;
   };
 
   return (
     <>
-      <Header/>
+      <Header formData={formData} setFormData={setFormData} addTransaction={addTransaction}/>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <Balances transactions={transactions} formatCurrency={formatCurrency}/>
         <Summary transactions={transactions} formatCurrency={formatCurrency}/>
-        <Transactions transactions={transactions} formatCurrency={formatCurrency}/>
+        <Transactions transactions={transactions} setTransactions={setTransactions} formatCurrency={formatCurrency}/>
       </div>
     </>
   )

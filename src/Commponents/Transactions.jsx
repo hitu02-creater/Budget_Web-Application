@@ -1,19 +1,16 @@
 import React from 'react';
 
 import {
-  Plus,
-  //   TrendingUp,
-  //   TrendingDown,
-  Wallet,
-  //   PieChart as PieChartIcon,
-  Download,
   Trash2,
   Calendar,
-  X,
-  ChevronDown,
 } from "lucide-react";
 
 export default function Transactions(props) {
+
+   const handleDeleteTransaction = (id) => {
+    props.setTransactions(props.transactions.filter((t) => t.id !== id));
+  };
+
   return (
     <>
         <div className="mt-8 rounded-2xl shadow-lg bg-white border border-slate-100 overflow-hidden">

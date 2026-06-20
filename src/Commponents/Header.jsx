@@ -2,15 +2,10 @@ import React, { useState } from "react";
 
 import {
   Plus,
-  //   TrendingUp,
-  //   TrendingDown,
   Wallet,
-  //   PieChart as PieChartIcon,
   Download,
-  //   Trash2,
-  //   Calendar,
   X,
-  ChevronDown,
+  ChevronDown
 } from "lucide-react";
 
 const EXPENSE_CATEGORIES = [
@@ -31,24 +26,21 @@ const INCOME_CATEGORIES = [
   "Other",
 ];
 
-export default function Header() {
-  const [formData, setFormData] = useState({
-    description: "",
-    amount: "",
-    category: "",
-    type: "expense",
-  });
+export default function Header(props) {
+
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [showTypeDropdown, setShowTypeDropdown] = useState(false);
   const [showCategoryDropdown, setShowCategoryDropdown] = useState(false);
 
   const availableCategories =
-    formData.type === "expense" ? EXPENSE_CATEGORIES : INCOME_CATEGORIES;
+    props.formData.type === "expense" ? EXPENSE_CATEGORIES : INCOME_CATEGORIES;
 
   const handleAddTransaction = () => {
-    if (!formData.description || !formData.amount || !formData.category) {
+    if (!props.formData.description || !props.formData.amount || !props.formData.category) {
       return;
     }
+    props.addTransaction();
+    setIsModalOpen(false);
   };
 
   return (
@@ -122,8 +114,8 @@ export default function Header() {
                     className="w-full flex items-center justify-between px-4 py-2 rounded-lg border border-slate-300 bg-white hover:bg-slate-50 transition-colors text-left"
                   >
                     <span className="text-slate-900">
-                      {formData.type.charAt(0).toUpperCase() +
-                        formData.type.slice(1)}
+                      {props.formData.type.charAt(0).toUpperCase() +
+                        props.formData.type.slice(1)}
                     </span>
                     <ChevronDown className="w-4 h-4 text-slate-500" />
                   </button>
@@ -133,8 +125,8 @@ export default function Header() {
                         <button
                           key={type}
                           onClick={() => {
-                            setFormData({
-                              ...formData,
+                            props.setFormData({
+                              ...props.formData,
                               type: type,
                               category: "",
                             });
@@ -158,10 +150,10 @@ export default function Header() {
                 <input
                   type="text"
                   placeholder="e.g., Grocery Shopping"
-                  value={formData.description}
+                  value={props.formData.description}
                   onChange={(e) =>
-                    setFormData({
-                      ...formData,
+                    props.setFormData({
+                      ...props.formData,
                       description: e.target.value,
                     })
                   }
@@ -183,10 +175,10 @@ export default function Header() {
                   >
                     <span
                       className={
-                        formData.category ? "text-slate-900" : "text-slate-500"
+                        props.formData.category ? "text-slate-900" : "text-slate-500"
                       }
                     >
-                      {formData.category || "Select category"}
+                      {props.formData.category || "Select category"}
                     </span>
                     <ChevronDown className="w-4 h-4 text-slate-500" />
                   </button>
@@ -196,7 +188,7 @@ export default function Header() {
                         <button
                           key={cat}
                           onClick={() => {
-                            setFormData({ ...formData, category: cat });
+                            props.setFormData({ ...props.formData, category: cat });
                             setShowCategoryDropdown(false);
                           }}
                           className="w-full text-left px-4 py-2 hover:bg-slate-100 transition-colors text-slate-900 border-b last:border-b-0"
@@ -217,9 +209,9 @@ export default function Header() {
                 <input
                   type="number"
                   placeholder="0.00"
-                  value={formData.amount}
+                  value={props.formData.amount}
                   onChange={(e) =>
-                    setFormData({ ...formData, amount: e.target.value })
+                    props.setFormData({ ...props.formData, amount: e.target.value })
                   }
                   className="w-full px-4 py-2 rounded-lg border border-slate-300 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
                 />
@@ -227,7 +219,7 @@ export default function Header() {
 
               <button
                 onClick={handleAddTransaction}
-                className="w-full mt-6 px-4 py-3 rounded-lg bg-linear-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 transition-all text-white font-medium shadow-lg hover:shadow-xl"
+                className="w-full mt-6 px-4 py-3 cursor-pointer rounded-lg bg-linear-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 transition-all text-white font-medium shadow-lg hover:shadow-xl"
               >
                 Add Transaction
               </button>
