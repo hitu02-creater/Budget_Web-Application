@@ -57,7 +57,7 @@ export default function Header() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-green-500 rounded-lg flex items-center justify-center">
+              <div className="w-10 h-10 bg-linear-to-br from-blue-500 to-green-500 rounded-lg flex items-center justify-center">
                 <Wallet className="w-6 h-6 text-white" />
               </div>
               <div>
@@ -72,14 +72,14 @@ export default function Header() {
             <div className="flex gap-2">
               <button
                 // onClick={handleExport}
-                className="flex items-center gap-2 px-4 py-2 rounded-lg border border-slate-300 bg-white hover:bg-slate-50 transition-colors text-sm font-medium text-slate-700"
+                className="flex items-center gap-2 px-4 py-2 rounded-lg cursor-pointer border border-slate-300 bg-white hover:bg-slate-50 transition-colors text-sm font-medium text-slate-700"
               >
                 <Download className="w-4 h-4" />
                 <span className="hidden sm:inline">Export</span>
               </button>
               <button
                 onClick={() => setIsModalOpen(true)}
-                className="flex items-center gap-2 px-4 py-2 rounded-lg bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 transition-all text-sm font-medium text-white shadow-lg hover:shadow-xl"
+                className="flex items-center gap-2 px-4 py-2 cursor-pointer rounded-lg bg-linear-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 transition-all text-sm font-medium text-white shadow-lg hover:shadow-xl"
               >
                 <Plus className="w-4 h-4" />
                 <span className="hidden sm:inline">Add Transaction</span>
@@ -227,7 +227,7 @@ export default function Header() {
 
               <button
                 onClick={handleAddTransaction}
-                className="w-full mt-6 px-4 py-3 rounded-lg bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 transition-all text-white font-medium shadow-lg hover:shadow-xl"
+                className="w-full mt-6 px-4 py-3 rounded-lg bg-linear-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 transition-all text-white font-medium shadow-lg hover:shadow-xl"
               >
                 Add Transaction
               </button>
