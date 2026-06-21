@@ -39,7 +39,26 @@ export default function Header(props) {
     if (!props.formData.description || !props.formData.amount || !props.formData.category) {
       return;
     }
-    props.addTransaction();
+
+    const transaction = {
+      description: props.formData.description,
+      amount: Number(props.formData.amount),
+      category: props.formData.category,
+      type: props.formData.type,
+      date: new Date().toISOString().split("T")[0],
+      month: new Date().toLocaleString("default", {
+        month: "short",
+        year: "numeric",
+      }),
+    }
+    
+    props.addTransaction(transaction);
+    props.setFormData({
+      description: "",
+      amount: "",
+      category: "",
+      type: "",
+    });
     setIsModalOpen(false);
   };
 

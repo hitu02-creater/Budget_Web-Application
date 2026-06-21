@@ -7,13 +7,11 @@ import {
 
 export default function Transactions(props) {
 
-  const deleteTransaction = (id) => {
-  props.setTransactions(
-    props.transactions.filter(
-      (transaction) => transaction.id !== id
-    )
-  );
-};
+  const handleDeleteTransaction = (id) => {
+    props.setTransactions((prev) =>
+      prev.filter((transaction) => transaction.id !== id)
+    );
+  };
   
 
   return (

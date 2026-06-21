@@ -7,95 +7,32 @@ import Transactions from './Commponents/Transactions';
 
 function App() {
 
+  const defaultTransactions = [
+
+  ];
+
   const [transactions, setTransactions] = useState(()=>{
     
-  const savedTransactions = localStorage.getItem("transactions");
+    try {
+    const saved = localStorage.getItem("transactions");
 
-  return savedTransactions
-    ? JSON.parse(savedTransactions)
-    : [
-        {
-          id: "1",
-          description: "Monthly Salary",
-          amount: 5000,
-          category: "Salary",
-          type: "income",
-          date: "2024-12-01",
-          month: "Dec 2024",
-        },
-        {
-          id: "2",
-          description: "Grocery Shopping",
-          amount: 150,
-          category: "Food",
-          type: "expense",
-          date: "2024-12-05",
-          month: "Dec 2024",
-        },
-      ]
+    if (saved) {
+      return JSON.parse(saved);
+    }
 
-      useEffect(() => {
-        localStorage.setItem(
-          "transactions",
-          JSON.stringify(transactions)
-        );
-      }, [transactions]);
-    
-    // {
-    //   id: "3",
-    //   description: "Gas",
-    //   amount: 60,
-    //   category: "Transportation",
-    //   type: "expense",
-    //   date: "2024-12-06",
-    //   month: "Dec 2024",
-    // },
-    // {
-    //   id: "4",
-    //   description: "Movie Night",
-    //   amount: 30,
-    //   category: "Entertainment",
-    //   type: "expense",
-    //   date: "2024-12-08",
-    //   month: "Dec 2024",
-    // },
-    // {
-    //   id: "5",
-    //   description: "Electricity Bill",
-    //   amount: 120,
-    //   category: "Utilities",
-    //   type: "expense",
-    //   date: "2024-12-10",
-    //   month: "Dec 2024",
-    // },
-    // {
-    //   id: "6",
-    //   description: "Freelance Project",
-    //   amount: 800,
-    //   category: "Freelance",
-    //   type: "income",
-    //   date: "2024-12-12",
-    //   month: "Dec 2024",
-    // },
-    // {
-    //   id: "7",
-    //   description: "Doctor Visit",
-    //   amount: 200,
-    //   category: "Healthcare",
-    //   type: "expense",
-    //   date: "2024-12-15",
-    //   month: "Dec 2024",
-    // },
-    // {
-    //   id: "8",
-    //   description: "New Shoes",
-    //   amount: 120,
-    //   category: "Shopping",
-    //   type: "expense",
-    //   date: "2024-12-18",
-    //   month: "Dec 2024",
-    // },
+    return defaultTransactions;
+  } catch (error) {
+    console.error("Error reading localStorage:", error);
+    return defaultTransactions;
+  }
 });
+
+  useEffect(() => {
+    localStorage.setItem(
+      "transactions",
+      JSON.stringify(transactions)
+    );
+  }, [transactions]);
 
   const [formData, setFormData] = useState({
       description: "",
@@ -106,22 +43,44 @@ function App() {
   
     const addTransaction = (newTransaction) => {
      
-    setTransactions((prev) => [...prev , {
-      ...newTransaction,
-      id: Date.now().toString();
-    }]);
-  };
+      setTransactions((prev) => [
+        ...prev,
+        {
+          ...newTransaction,
+          id: Date.now().toString(),
+          amount: Number(newTransaction.amount),
+        },
+      ]);
+    };
 
-  const formatCurrency = (value) => {
+  const formatCurrency = (value = 0) => {
       return `Rs. ${value.toFixed(2)}`;
   };
+
+  const [budgets, setBudgets] = useState(() => {
+    const savedBudgets = localStorage.getItem("budgets");
+
+    return savedBudgets
+      ? JSON.parse(savedBudgets)
+      : [];
+  });
+
+  useEffect(() => {
+    localStorage.setItem(
+      "budgets",
+      JSON.stringify(budgets)
+    );
+  }, [budgets]);
 
   return (
     <>
       <Header formData={formData} setFormData={setFormData} addTransaction={addTransaction}/>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <Balances transactions={transactions} formatCurrency={formatCurrency}/>
-        <Summary transactions={transactions} formatCurrency={formatCurrency}/>
+        <Summary transactions={transactions}
+          budgets={budgets}
+          setBudgets={setBudgets}
+          formatCurrency={formatCurrency}/>
         <Transactions transactions={transactions} setTransactions={setTransactions} formatCurrency={formatCurrency}/>
       </div>
     </>
