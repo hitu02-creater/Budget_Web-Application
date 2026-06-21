@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState , useEffect } from 'react';
 import './App.css'
 import Balances from './Commponents/Balances'
 import Header from './Commponents/Header'
@@ -14,26 +14,32 @@ function App() {
   return savedTransactions
     ? JSON.parse(savedTransactions)
     : [
-      {
-      id: "1",
-      description: "Monthly Salary",
-      amount: 5000,
-      category: "Salary",
-      type: "income",
-      date: "2024-12-01",
-      month: "Dec 2024",
-    },
-    {
-      id: "2",
-      description: "Grocery Shopping",
-      amount: 150,
-      category: "Food",
-      type: "expense",
-      date: "2024-12-05",
-      month: "Dec 2024",
-    },
-    ]
-    
+        {
+          id: "1",
+          description: "Monthly Salary",
+          amount: 5000,
+          category: "Salary",
+          type: "income",
+          date: "2024-12-01",
+          month: "Dec 2024",
+        },
+        {
+          id: "2",
+          description: "Grocery Shopping",
+          amount: 150,
+          category: "Food",
+          type: "expense",
+          date: "2024-12-05",
+          month: "Dec 2024",
+        },
+      ]
+
+      useEffect(() => {
+        localStorage.setItem(
+          "transactions",
+          JSON.stringify(transactions)
+        );
+      }, [transactions]);
     
     // {
     //   id: "3",
@@ -98,21 +104,12 @@ function App() {
       type: "expense",
     });
   
-    const addTransaction = () => {
-      const newTransaction = {
-        id: Date.now().toString(),
-        description: formData.description,
-        amount: parseFloat(formData.amount),
-        category: formData.category,
-        type: formData.type,
-        date: new Date().toISOString().split("T")[0],
-        month: new Date().toLocaleDateString("en-US", {
-          year: "numeric",
-          month: "short",
-    }),
-  };
-
-    setTransactions((prev) => [newTransaction, ...prev]);
+    const addTransaction = (newTransaction) => {
+     
+    setTransactions((prev) => [...prev , {
+      ...newTransaction,
+      id: Date.now().toString();
+    }]);
   };
 
   const formatCurrency = (value) => {
