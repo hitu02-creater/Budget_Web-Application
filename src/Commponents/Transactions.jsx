@@ -61,7 +61,7 @@ export default function Transactions(props) {
                     <td className="px-6 py-4 text-sm font-medium text-slate-900">
                       {transaction.description}
                     </td>
-                    <td className="px-6 py-4 text-sm text-slate-600">
+                    <td className="px-6 py-4 text-sm text-slate-600" key={transaction.id}>
                       <span className="inline-block px-3 py-1 bg-slate-100 text-slate-700 rounded-full text-xs font-medium">
                         {transaction.category}
                       </span>

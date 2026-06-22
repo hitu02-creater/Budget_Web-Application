@@ -8,6 +8,9 @@ import {
   ChevronDown
 } from "lucide-react";
 
+import * as XLSX from "xlsx";
+import { saveAs } from "file-saver";
+
 const EXPENSE_CATEGORIES = [
   "Food",
   "Transportation",
@@ -51,7 +54,7 @@ export default function Header(props) {
         year: "numeric",
       }),
     }
-    
+
     props.addTransaction(transaction);
     props.setFormData({
       description: "",
@@ -60,6 +63,139 @@ export default function Header(props) {
       type: "",
     });
     setIsModalOpen(false);
+  };
+
+  const exportData = () => {
+
+    // ===== Sheet 1 : Budget vs Expenses =====
+
+    const budgetComparison = props.budgets.map((budget) => {
+
+      const spent = props.transactions
+        .filter(
+          (t) =>
+            t.type === "expense" &&
+            t.category === budget.category
+        )
+        .reduce(
+          (sum, t) => sum + Number(t.amount),
+          0
+        );
+
+      return {
+        Category: budget.category,
+        Budget: budget.budget,
+        ActualExpense: spent,
+        Remaining: budget.budget - spent,
+        UsagePercentage:
+          budget.budget > 0
+            ? `${((spent / budget.budget) * 100).toFixed(2)}%`
+            : "0%",
+        Status:
+          spent > budget.budget
+            ? "Over Budget"
+            : "Within Budget",
+      };
+    });
+
+    // ===== Sheet 2 : Transaction Comparison =====
+
+    const transactionComparison =
+      props.transactions.map((transaction) => {
+
+        const categoryBudget = props.budgets.find(
+          (b) => b.category === transaction.category
+        );
+
+        const totalSpentInCategory =
+          props.transactions
+            .filter(
+              (t) =>
+                t.type === "expense" &&
+                t.category === transaction.category
+            )
+            .reduce(
+              (sum, t) =>
+                sum + Number(t.amount),
+              0
+            );
+
+        return {
+          Description: transaction.description,
+          Category: transaction.category,
+          Type: transaction.type,
+          Amount: transaction.amount,
+          Date: transaction.date || "",
+
+          CategoryBudget:
+            categoryBudget?.budget ?? "N/A",
+
+          TotalSpentInCategory:
+            transaction.type === "expense"
+              ? totalSpentInCategory
+              : "N/A",
+
+          BudgetStatus:
+            transaction.type === "income"
+              ? "Income"
+              : totalSpentInCategory >
+                (categoryBudget?.budget || 0)
+                ? "Over Budget"
+                : "Within Budget",
+        };
+      });
+
+    // ===== Create Workbook =====
+
+    const workbook = XLSX.utils.book_new();
+
+    // Sheet 1
+    const budgetSheet =
+      XLSX.utils.json_to_sheet(
+        budgetComparison
+      );
+
+    // Sheet 2
+    const transactionSheet =
+      XLSX.utils.json_to_sheet(
+        transactionComparison
+      );
+
+    XLSX.utils.book_append_sheet(
+      workbook,
+      budgetSheet,
+      "Budget_vs_Expenses"
+    );
+
+    XLSX.utils.book_append_sheet(
+      workbook,
+      transactionSheet,
+      "Transaction_Comparison"
+    );
+
+    // ===== Export =====
+
+    const excelBuffer = XLSX.write(
+      workbook,
+      {
+        bookType: "xlsx",
+        type: "array",
+      }
+    );
+
+    const file = new Blob(
+      [excelBuffer],
+      {
+        type:
+          "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8",
+      }
+    );
+
+    saveAs(
+      file,
+      `FinanceHub_Report_${new Date().toISOString().split("T")[0]
+      }.xlsx`
+    );
   };
 
   return (
@@ -82,10 +218,10 @@ export default function Header(props) {
             </div>
             <div className="flex gap-2">
               <button
-                // onClick={handleExport}
+                onClick={exportData}
                 className="flex items-center gap-2 px-4 py-2 rounded-lg cursor-pointer border border-slate-300 bg-white hover:bg-slate-50 transition-colors text-sm font-medium text-slate-700"
               >
-                <Download className="w-4 h-4" />
+                <Download className="w-4 h-4" size={18} />
                 <span className="hidden sm:inline">Export</span>
               </button>
               <button

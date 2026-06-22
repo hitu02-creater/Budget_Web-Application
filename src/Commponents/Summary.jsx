@@ -20,6 +20,31 @@ import {
 
 export default function Summary(props) {
 
+  const monthlyData = {};
+
+  props.transactions.forEach((transaction) => {
+    const month = new Date(transaction.date).toLocaleString(
+      "default",
+      { month: "short" }
+    );
+
+    if (!monthlyData[month]) {
+      monthlyData[month] = {
+        month,
+        income: 0,
+        expenses: 0,
+      };
+    }
+
+    if (transaction.type === "income") {
+      monthlyData[month].income += Number(transaction.amount);
+    } else {
+      monthlyData[month].expenses += Number(transaction.amount);
+    }
+  });
+
+  const expenseTrend = Object.values(monthlyData);
+
   const COLORS = {
     Food: "#FF6B6B",
     Transportation: "#4ECDC4",
@@ -30,11 +55,15 @@ export default function Summary(props) {
     Other: "#FCBAD3",
   };
 
-  const monthlyData = [
-    { month: "Oct", income: 5000, expenses: 1800 },
-    { month: "Nov", income: 5800, expenses: 2100 },
-    { month: "Dec", income: 5800, expenses: 680 },
-  ];
+  const currentMonth = new Date().toLocaleString(
+    "default",
+    {
+      month: "short",
+      year: "numeric",
+    }
+  );
+
+  props.transactions.month === currentMonth;
 
   const [showBudgetModal, setShowBudgetModal] = useState(false);
 
@@ -109,97 +138,59 @@ export default function Summary(props) {
     value,
   }));
 
+  const totalBudget = props.budgets.reduce(
+    (sum, budget) => sum + Number(budget.budget),
+    0
+  );
+
+  const totalIncome = props.transactions
+    .filter((t) => t.type === "income")
+    .reduce((sum, t) => sum + Number(t.amount), 0);
+
+  const totalExpenses = props.transactions
+    .filter((t) => t.type === "expense")
+    .reduce((sum, t) => sum + Number(t.amount), 0);
+
+  const remainingBudget = totalBudget - totalExpenses;
+
+  const budgetUsedPercentage =
+    totalBudget > 0
+      ? ((totalExpenses / totalBudget) * 100).toFixed(1)
+      : 0;
+
   return (
     <>
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        {/* Left Column - Charts and Reports */}
-        <div className="lg:col-span-2 space-y-8">
-          {/* Monthly Trends */}
-          <div className="p-6 rounded-2xl shadow-lg bg-white border border-slate-100">
-            <h2 className="text-xl font-bold text-slate-900 mb-6">
-              Monthly Trends
-            </h2>
-            <ResponsiveContainer width="100%" height={300}>
-              <LineChart data={monthlyData}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
-                <XAxis dataKey="month" stroke="#64748b" />
-                <YAxis stroke="#64748b" />
-                <Tooltip
-                  formatter={(value) => props.formatCurrency(value)}
-                  contentStyle={{
-                    backgroundColor: "#1e293b",
-                    border: "none",
-                    borderRadius: "8px",
-                    color: "#fff",
-                  }}
-                />
-                <Legend />
-                <Line
-                  type="monotone"
-                  dataKey="income"
-                  stroke="#10b981"
-                  strokeWidth={2}
-                  dot={{ fill: "#10b981", r: 5 }}
-                  activeDot={{ r: 7 }}
-                />
-                <Line
-                  type="monotone"
-                  dataKey="expenses"
-                  stroke="#ef4444"
-                  strokeWidth={2}
-                  dot={{ fill: "#ef4444", r: 5 }}
-                  activeDot={{ r: 7 }}
-                />
-              </LineChart>
-            </ResponsiveContainer>
-          </div>
-
-          {/* Expense Breakdown */}
-          <div className="p-6 rounded-2xl shadow-lg bg-white border border-slate-100">
-            <h2 className="text-xl font-bold text-slate-900 mb-6">
-              Expense Breakdown
-            </h2>
-            <ResponsiveContainer width="100%" height={300}>
-              <PieChart>
-                <Pie
-                  data={expensesByCategory}
-                  cx="50%"
-                  cy="50%"
-                  labelLine={true}
-                  label={(entry) =>
-                    `${entry.name}: ${props.formatCurrency(entry.value)}`
-                  }
-                  outerRadius={100}
-                  fill="#8884d8"
-                  dataKey="value"
-                >
-                  {expensesByCategory.map((entry, index) => (
-                    <Cell
-                      key={`cell-${index}`}
-                      fill={COLORS[entry.name] || "#94a3b8"}
-                    />
-                  ))}
-                </Pie>
-                <Tooltip formatter={(value) => props.formatCurrency(value)} />
-              </PieChart>
-            </ResponsiveContainer>
-          </div>
-        </div>
-
-        {/* Right Column - Budget Planning */}
-        <div className="space-y-8">
-          {/* Budget Overview */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <div className="lg:col-span-1 space-y-8">
+          {/* Budget Planning */}
           <div className="flex justify-between items-center mb-6">
             <h2 className="text-xl font-bold text-slate-900">
               Budget Planning
             </h2>
 
-            <button
-              onClick={() => setShowBudgetModal(true)}
-              className="px-3 py-2 rounded-lg bg-blue-600 text-white text-sm cursor-pointer"
-            >
-              + Budget
-            </button>
+            <div className="flex gap-2">
+              <button
+                onClick={() => setShowBudgetModal(true)}
+                className="px-3 py-2 rounded-lg bg-blue-600 text-white text-sm cursor-pointer"
+              >
+                + Budget
+              </button>
+
+              <button
+                onClick={() => {
+                  if (
+                    window.confirm(
+                      "Start a new month? All budgets will be reset."
+                    )
+                  ) {
+                    props.setBudgets([]);
+                  }
+                }}
+                className="px-3 py-2 rounded-lg bg-orange-500 text-white text-sm"
+              >
+                Start New Month
+              </button>
+            </div>
 
             {
               showBudgetModal && (
@@ -275,6 +266,7 @@ export default function Summary(props) {
                 </div>
               )
             }
+
           </div>
           <div className="p-6 rounded-2xl shadow-lg bg-white border border-slate-100">
             <h2 className="text-xl font-bold text-slate-900 mb-6 flex items-center gap-2">
@@ -312,6 +304,146 @@ export default function Summary(props) {
                   </div>
                 );
               })}
+            </div>
+          </div>
+
+          {/* Expense Breakdown */}
+          <div className="p-6 rounded-2xl shadow-lg bg-white border border-slate-100">
+            <h2 className="text-xl font-bold text-slate-900 mb-6">
+              Expense Breakdown
+            </h2>
+            <ResponsiveContainer width="100%" height={300}>
+              <PieChart>
+                <Pie
+                  data={expensesByCategory}
+                  cx="50%"
+                  cy="50%"
+                  labelLine={true}
+                  label={(entry) =>
+                    `${entry.name}: ${props.formatCurrency(entry.value)}`
+                  }
+                  outerRadius={100}
+                  fill="#8884d8"
+                  dataKey="value"
+                >
+                  {expensesByCategory.map((entry, index) => (
+                    <Cell
+                      key={`cell-${index}`}
+                      fill={COLORS[entry.name] || "#94a3b8"}
+                    />
+                  ))}
+                </Pie>
+                <Tooltip formatter={(value) => props.formatCurrency(value)} />
+              </PieChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
+
+
+        {/* Right Column - Budget Planning */}
+        <div className="space-y-8">
+          {/* Budget & Expanses summary */}
+
+          <div className="p-6 rounded-2xl shadow-lg bg-white border border-slate-100">
+            <h2 className="text-xl font-bold text-slate-900 mb-6">
+              Budget Summary
+            </h2>
+
+            <div className="grid grid-cols-2 gap-4">
+
+              <div className="p-4 rounded-xl bg-blue-50">
+                <p className="text-sm text-slate-600">
+                  Total Budget
+                </p>
+                <h3 className="text-2xl font-bold text-blue-600">
+                  {props.formatCurrency(totalBudget)}
+                </h3>
+              </div>
+
+              <div className="p-4 rounded-xl bg-green-50">
+                <p className="text-sm text-slate-600">
+                  Total Income
+                </p>
+                <h3 className="text-2xl font-bold text-green-600">
+                  {props.formatCurrency(totalIncome)}
+                </h3>
+              </div>
+
+              <div className="p-4 rounded-xl bg-red-50">
+                <p className="text-sm text-slate-600">
+                  Total Expenses
+                </p>
+                <h3 className="text-2xl font-bold text-red-600">
+                  {props.formatCurrency(totalExpenses)}
+                </h3>
+              </div>
+
+              <div
+                className={`p-4 rounded-xl ${remainingBudget >= 0
+                  ? "bg-emerald-50"
+                  : "bg-orange-50"
+                  }`}
+              >
+                <p className="text-sm text-slate-600">
+                  Remaining Budget
+                </p>
+
+                <h3
+                  className={`text-2xl font-bold ${remainingBudget >= 0
+                    ? "text-emerald-600"
+                    : "text-orange-600"
+                    }`}
+                >
+                  {props.formatCurrency(remainingBudget)}
+                </h3>
+              </div>
+            </div>
+
+            <div className="mt-6">
+              <div className="flex justify-between mb-2">
+                <span className="font-medium text-slate-700">
+                  Budget Usage
+                </span>
+
+                <span
+                  className={`font-bold ${budgetUsedPercentage > 100
+                    ? "text-red-600"
+                    : "text-green-600"
+                    }`}
+                >
+                  {budgetUsedPercentage}%
+                </span>
+              </div>
+
+              <div className="w-full h-4 bg-slate-200 rounded-full overflow-hidden">
+                <div
+                  className={`h-full ${budgetUsedPercentage > 100
+                    ? "bg-red-500"
+                    : "bg-green-500"
+                    }`}
+                  style={{
+                    width: `${Math.min(
+                      budgetUsedPercentage,
+                      100
+                    )}%`,
+                  }}
+                />
+              </div>
+            </div>
+
+            <div className="mt-5 text-center">
+              {totalExpenses > totalBudget ? (
+                <p className="text-red-600 font-semibold">
+                  ⚠️ You have exceeded your budget by{" "}
+                  {props.formatCurrency(
+                    totalExpenses - totalBudget
+                  )}
+                </p>
+              ) : (
+                <p className="text-green-600 font-semibold">
+                  ✅ You are within your budget.
+                </p>
+              )}
             </div>
           </div>
 

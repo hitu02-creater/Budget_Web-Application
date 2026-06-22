@@ -74,7 +74,7 @@ function App() {
 
   return (
     <>
-      <Header formData={formData} setFormData={setFormData} addTransaction={addTransaction}/>
+      <Header transactions={transactions} formData={formData} setFormData={setFormData} budgets={budgets} addTransaction={addTransaction}/>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <Balances transactions={transactions} formatCurrency={formatCurrency}/>
         <Summary transactions={transactions}
