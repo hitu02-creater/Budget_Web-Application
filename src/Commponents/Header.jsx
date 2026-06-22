@@ -65,6 +65,8 @@ export default function Header(props) {
     setIsModalOpen(false);
   };
 
+  {/*Export of sheet in xlsx form of Data*/}
+
   const exportData = () => {
 
     // ===== Sheet 1 : Budget vs Expenses =====
@@ -216,6 +218,7 @@ export default function Header(props) {
                 </p>
               </div>
             </div>
+            
             <div className="flex gap-2">
               <button
                 onClick={exportData}
