@@ -13,7 +13,6 @@ export default function Transactions(props) {
     );
   };
   
-
   return (
     <>
         <div className="mt-8 rounded-2xl shadow-lg bg-white border border-slate-100 overflow-hidden">

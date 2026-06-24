@@ -7,18 +7,6 @@ import Transactions from './Commponents/Transactions';
 
 function App() {
 
-  const [monthlyHistory, setMonthlyHistory] = useState(() => {
-    const saved = localStorage.getItem("monthlyHistory");
-    return saved ? JSON.parse(saved) : [];
-  });
-
-  useEffect(() => {
-    localStorage.setItem(
-      "monthlyHistory",
-      JSON.stringify(monthlyHistory)
-    );
-  }, [monthlyHistory]);
-
   const defaultTransactions = [];
 
   const [transactions, setTransactions] = useState(() => {
@@ -51,6 +39,21 @@ function App() {
     type: "expense",
   });
 
+  const [budgets, setBudgets] = useState(() => {
+    const savedBudgets = localStorage.getItem("budgets");
+
+    return savedBudgets
+      ? JSON.parse(savedBudgets)
+      : [];
+  });
+
+  useEffect(() => {
+    localStorage.setItem(
+      "budgets",
+      JSON.stringify(budgets)
+    );
+  }, [budgets]);
+
   const [currentMonth, setCurrentMonth] = useState(
     new Date().toLocaleString("default", {
       month: "short",
@@ -75,21 +78,6 @@ function App() {
     return `Rs. ${value.toFixed(2)}`;
   };
 
-  const [budgets, setBudgets] = useState(() => {
-    const savedBudgets = localStorage.getItem("budgets");
-
-    return savedBudgets
-      ? JSON.parse(savedBudgets)
-      : [];
-  });
-
-  useEffect(() => {
-    localStorage.setItem(
-      "budgets",
-      JSON.stringify(budgets)
-    );
-  }, [budgets]);
-
   return (
     <>
       <Header
@@ -106,14 +94,13 @@ function App() {
         />
         <Summary
           transactions={transactions}
-          budgets={budgets}
-          setMonthlyHistory={setMonthlyHistory}
-          monthlyHistory={monthlyHistory}
-          setBudgets={setBudgets}
           formatCurrency={formatCurrency}
           currentMonth={currentMonth}
           setCurrentMonth={setCurrentMonth}
-          setTransactions={setTransactions} />
+          setTransactions={setTransactions}
+          budgets={budgets}
+          setBudgets={setBudgets} 
+        />
         <Transactions
           transactions={transactions}
           setTransactions={setTransactions}
