@@ -4,17 +4,8 @@ import tailwindcss from "@tailwindcss/vite";
 
 export default defineConfig({
   plugins: [react(), tailwindcss()],
-  build: {
-    chunkSizeWarningLimit: 1000,
-    rollupOptions: {
-      output: {
-        manualChunks: {
-          pdf: ["jspdf"],
-          vendor: ["react", "react-dom"],
-          charts: ["recharts"],
-        },
-      },
-    },
-  },
   base: "/Budget_Web-Application/",
+  build: {
+    chunkSizeWarningLimit: 1000, // 1000 KB
+  },
 });
