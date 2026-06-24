@@ -1,4 +1,4 @@
-import React, { useState , useEffect  } from 'react'
+import React, { useState, useEffect } from 'react'
 
 import {
     PieChart as PieChartIcon,
@@ -51,12 +51,6 @@ export default function Details(props) {
     {/*To start the new month Budget creation*/ }
     const startNewMonth = () => {
 
-        const confirmed = window.confirm(
-            "Starting a new month will archive current budgets and transactions. Continue?"
-        );
-
-        if (!confirmed) return;
-
         const totalIncome = props.currentMonthTransactions
             .filter((t) => t.type === "income")
             .reduce((sum, t) => sum + Number(t.amount), 0);
@@ -102,22 +96,13 @@ export default function Details(props) {
         const nextMonth = new Date();
         nextMonth.setMonth(nextMonth.getMonth() + 1);
 
-        props.setCurrentMonth(
-            nextMonth.toLocaleString("default", {
-                month: "short",
-                year: "numeric",
-            })
-        );
-
-        console.log(
-            "New Month:",
-            nextMonth.toLocaleString("default", {
-                month: "short",
-                year: "numeric",
-            })
-        );
+        const newMonth = nextMonth.toLocaleString("default", {
+            month: "short",
+            year: "numeric",
+        });
 
         props.setCurrentMonth(newMonth);
+
         props.setBudgets([]);
         localStorage.setItem("budgets", JSON.stringify([]))
 
