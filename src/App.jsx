@@ -1,4 +1,3 @@
-// import { useState, useEffect } from 'react';
 import './App.css'
 
 import React, { useState, useEffect } from "react";
@@ -97,11 +96,11 @@ function App() {
 
             <Route
               path="/"
-              element={<Navigate to="/Budget_Web-Application/dashboard" replace />}
+              element={<Navigate to="/dashboard" replace />}
             />
 
             <Route
-              path="/Budget_Web-Application/dashboard"
+              path="/dashboard"
               element={
                 <>
                   <Dashboard
@@ -119,7 +118,7 @@ function App() {
             />
 
             <Route
-              path="/Budget_Web-Application/budget"
+              path="/budget"
               element={
                 <BudgetSummary
                   formatCurrency={formatCurrency}
@@ -133,7 +132,7 @@ function App() {
             />
 
             <Route
-              path="/Budget_Web-Application/transactions"
+              path="/transactions"
               element={
                 <AllTransactions
                   formatCurrency={formatCurrency}
@@ -144,7 +143,7 @@ function App() {
             />
 
             <Route
-              path="/Budget_Web-Application/analytics"
+              path="/analytics"
               element={
                 <MonthlySummary
                   formatCurrency={formatCurrency}
@@ -158,7 +157,7 @@ function App() {
             />
 
             <Route
-              path="/Budget_Web-Application/history"
+              path="/history"
               element={
                 <TransactionHistory
                   formatCurrency={formatCurrency}
@@ -169,7 +168,7 @@ function App() {
             />
 
             <Route
-              path="/Budget_Web-Application/settings"
+              path="/settings"
               element={
                 <Setting />
               }
