@@ -4,8 +4,8 @@ import tailwindcss from "@tailwindcss/vite";
 
 export default defineConfig({
   plugins: [react(), tailwindcss()],
-  base: "" /*/Budget_Web-Application/*/,
+  base: "/Budget_Web-Application/" /**/,
   build: {
-    chunkSizeWarningLimit: 1000, // 1000 KB
+    chunkSizeWarningLimit: 2000, // 1000 KB
   },
 });
