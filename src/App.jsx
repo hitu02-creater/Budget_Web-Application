@@ -1,13 +1,53 @@
-import { useState, useEffect } from 'react';
+// import { useState, useEffect } from 'react';
 import './App.css'
-import Balances from './Commponents/Balances'
-import Header from './Commponents/Header'
-import Summary from './Commponents/Summary';
-import Transactions from './Commponents/Transactions';
+
+import React, { useState, useEffect } from "react";
+
+import {
+  // BrowserRouter,
+  Routes,
+  Route,
+  Navigate
+} from "react-router-dom";
+
+import Sidebar from "./Commponents/Layout/Slidebar";
+import Navbar from "./Commponents/Layout/Navbar";
+
+import Dashboard from './Commponents/Pages/Dashboard/Dashboard';
+import BudgetSummary from "./Commponents/Pages/Budget/BudgetSummary";
+import AllTransactions from "./Commponents/Pages/Transactions/AllTransactions";
+import MonthlySummary from "./Commponents/Pages/Monthly Summary/MonthlySummary";
+import TransactionHistory from "./Commponents/Pages/History Page/TransactionHistory";
+import Setting from "./Commponents/Pages/Setting/Setting";
 
 function App() {
 
-  const defaultTransactions = [];
+  const [currentTime, setCurrentTime] = useState(new Date());
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentTime(new Date());
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, []);
+
+  const month = currentTime.toLocaleDateString("en-IN", {
+    month: "long",
+    year: "numeric",
+  });
+
+  const formatCurrency = (value = 0) => {
+    return `Rs. ${value.toFixed(2)}`;
+  };
+
+  const defaultTransactions = [{
+    title: "",
+    amount: 0,
+    type: "",
+    category: "",
+    month: ""
+  }];
 
   const [transactions, setTransactions] = useState(() => {
 
@@ -32,13 +72,6 @@ function App() {
     );
   }, [transactions]);
 
-  const [formData, setFormData] = useState({
-    description: "",
-    amount: "",
-    category: "",
-    type: "expense",
-  });
-
   const [budgets, setBudgets] = useState(() => {
     const savedBudgets = localStorage.getItem("budgets");
 
@@ -54,60 +87,92 @@ function App() {
     );
   }, [budgets]);
 
-  const [currentMonth, setCurrentMonth] = useState(
-    new Date().toLocaleString("default", {
-      month: "short",
-      year: "numeric",
-    })
-  );
-
-  const addTransaction = (newTransaction) => {
-
-    setTransactions((prev) => [
-      ...prev,
-      {
-        ...newTransaction,
-        id: Date.now().toString(),
-        amount: Number(newTransaction.amount),
-        month: currentMonth
-      },
-    ]);
-  };
-
-  const formatCurrency = (value = 0) => {
-    return `Rs. ${value.toFixed(2)}`;
-  };
-
   return (
-    <>
-      <Header
-        transactions={transactions}
-        formData={formData}
-        setFormData={setFormData}
-        budgets={budgets}
-        addTransaction={addTransaction}
-      />
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <Balances
-          transactions={transactions}
-          formatCurrency={formatCurrency}
-        />
-        <Summary
-          transactions={transactions}
-          formatCurrency={formatCurrency}
-          currentMonth={currentMonth}
-          setCurrentMonth={setCurrentMonth}
-          setTransactions={setTransactions}
-          budgets={budgets}
-          setBudgets={setBudgets} 
-        />
-        <Transactions
-          transactions={transactions}
-          setTransactions={setTransactions}
-          formatCurrency={formatCurrency}
-        />
-      </div>
-    </>
+    <div className="min-h-screen bg-[#050816]" id="dashboard">
+      <Sidebar />
+      <main className="ml-72">
+        <Navbar />
+        <div className="p-8 space-y-8">
+          <Routes>
+
+            <Route
+              path="/"
+              element={
+                <>
+                  <Dashboard
+                    formatCurrency={formatCurrency}
+                    currentTime={currentTime}
+                    setCurrentTime={setCurrentTime}
+                    transactions={transactions}
+                    setTransactions={setTransactions}
+                    budgets={budgets}
+                    setBudgets={setBudgets}
+                    month={month}
+                  />
+                </>
+              }
+            />
+
+            <Route
+              path="/budget"
+              element={
+                <BudgetSummary
+                  formatCurrency={formatCurrency}
+                  transactions={transactions}
+                  setTransactions={setTransactions}
+                  budgets={budgets}
+                  setBudgets={setBudgets}
+                  month={month}
+                />
+              }
+            />
+
+            <Route
+              path="/transactions"
+              element={
+                <AllTransactions
+                  formatCurrency={formatCurrency}
+                  transactions={transactions}
+                  setTransactions={setTransactions}
+                />
+              }
+            />
+
+            <Route
+              path="/analytics"
+              element={
+                <MonthlySummary
+                  formatCurrency={formatCurrency}
+                  transactions={transactions}
+                  setTransactions={setTransactions}
+                  budgets={budgets}
+                  setBudgets={setBudgets}
+                  month={month}
+                />
+              }
+            />
+
+            <Route
+              path="/history"
+              element={
+                <TransactionHistory
+                  formatCurrency={formatCurrency}
+                  transactions={transactions}
+                  month={month}
+                />
+              }
+            />
+
+            <Route
+              path="/settings"
+              element={
+                <Setting />
+              }
+            />
+          </Routes>
+        </div>
+      </main>
+    </div>
   )
 }
 
