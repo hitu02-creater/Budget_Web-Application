@@ -97,11 +97,11 @@ function App() {
 
             <Route
               path="/"
-              element={<Navigate to="/dashboard" replace />}
+              element={<Navigate to="/Budget_Web-Application/dashboard" replace />}
             />
 
             <Route
-              path="/dashboard"
+              path="/Budget_Web-Application/dashboard"
               element={
                 <>
                   <Dashboard
@@ -119,7 +119,7 @@ function App() {
             />
 
             <Route
-              path="/budget"
+              path="/Budget_Web-Application/budget"
               element={
                 <BudgetSummary
                   formatCurrency={formatCurrency}
@@ -133,7 +133,7 @@ function App() {
             />
 
             <Route
-              path="/transactions"
+              path="/Budget_Web-Application/transactions"
               element={
                 <AllTransactions
                   formatCurrency={formatCurrency}
@@ -144,7 +144,7 @@ function App() {
             />
 
             <Route
-              path="/analytics"
+              path="/Budget_Web-Application/analytics"
               element={
                 <MonthlySummary
                   formatCurrency={formatCurrency}
@@ -158,7 +158,7 @@ function App() {
             />
 
             <Route
-              path="/history"
+              path="/Budget_Web-Application/history"
               element={
                 <TransactionHistory
                   formatCurrency={formatCurrency}
@@ -169,7 +169,7 @@ function App() {
             />
 
             <Route
-              path="/settings"
+              path="/Budget_Web-Application/settings"
               element={
                 <Setting />
               }
