@@ -96,6 +96,11 @@ function App() {
           <Routes>
 
             <Route
+              index
+              element={<Navigate to="dashboard" replace />}
+            />
+
+            <Route
               path="/"
               element={
                 <>
