@@ -9,6 +9,7 @@ import {
 } from "lucide-react";
 
 export default function AllTransactions(props) {
+
     const handleDeleteTransaction = (id) => {
         props.setTransactions((prev) =>
             prev.filter((transaction) => transaction.id !== id)
@@ -38,8 +39,6 @@ export default function AllTransactions(props) {
                     {/* Right */}
 
                     <div className="flex flex-wrap gap-4">
-                        {/* Filter */}
-
                         <button
                             className="flex items-center gap-2 rounded-2xl border border-white/10 bg-slate-900/60 
                             px-5 py-3 text-slate-300 transition hover:border-cyan-400 hover:bg-cyan-500/10"
