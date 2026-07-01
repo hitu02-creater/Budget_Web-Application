@@ -6,7 +6,7 @@ const isVercel = process.env.VERCEL === "1";
 
 export default defineConfig({
   plugins: [react(), tailwindcss()],
-  base: isVercel ? "/" : "/Budget_Web-Application/" /**/,
+  base: isVercel ? "/" : "/Budget_Web-Application" /**/,
   build: {
     chunkSizeWarningLimit: 2000, // 1000 KB
   },
